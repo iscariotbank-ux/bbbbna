@@ -1,4 +1,5 @@
-from zoneinfo import ZoneInfo
+import time
+from datetime import datetime, timezone
 
 from instagrapi import Client
 
@@ -21,13 +22,21 @@ print("Login OK")
 # ดึง user ID ของร้านค้าจาก username
 user_id = cl.user_id_from_username(TARGET_USERNAME)
 
-# ดึงโพสต์ล่าสุด 1 โพสต์
-medias = cl.user_medias(user_id, amount=1)
-media = medias[0]
+# วน loop ตรวจสอบโพสต์ล่าสุดทุก 1 วินาที
+while True:
+    # ดึงโพสต์ล่าสุด 1 โพสต์
+    medias = cl.user_medias(user_id, amount=1)
+    media = medias[0]
 
-# print media ID ของโพสต์
-print("Media ID:", media.pk)
+    # คำนวณอายุของโพสต์ = เวลาปัจจุบัน - taken_at (หน่วยเป็นวินาที)
+    now = datetime.now(timezone.utc)
+    age_seconds = (now - media.taken_at).total_seconds()
 
-# แปลง timestamp (taken_at) เป็นเวลาประเทศไทย แล้ว print ออกมา
-taken_at_th = media.taken_at.astimezone(ZoneInfo("Asia/Bangkok"))
-print("Taken at (Thailand):", taken_at_th.strftime("%Y-%m-%d %H:%M:%S %Z"))
+    # ถ้าโพสต์อายุน้อยกว่า 60 วินาที ถือว่าเป็นโพสต์ใหม่
+    if age_seconds < 60:
+        print("เจอโพสต์ใหม่!", "Media ID:", media.pk)
+    else:
+        print("ยังไม่มีโพสต์ใหม่")
+
+    # รอ 1 วินาทีก่อนตรวจสอบรอบถัดไป
+    time.sleep(1)
