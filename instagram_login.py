@@ -3,6 +3,8 @@ from datetime import datetime, timezone
 
 from instagrapi import Client
 
+from post_comment import post_comment
+
 # กำหนด username และ password ของบัญชี Instagram
 USERNAME = "your_username"
 PASSWORD = "your_password"
@@ -35,6 +37,11 @@ while True:
     # ถ้าโพสต์อายุน้อยกว่า 60 วินาที ถือว่าเป็นโพสต์ใหม่
     if age_seconds < 60:
         print("เจอโพสต์ใหม่!", "Media ID:", media.pk)
+        # เจอโพสต์ใหม่ → คอมเมนต์ "CF" ทันที
+        post_comment(cl, media.pk, "CF")
+        # หยุด loop หลังคอมเมนต์เสร็จ
+        print("จบการทำงาน")
+        break
     else:
         print("ยังไม่มีโพสต์ใหม่")
 
