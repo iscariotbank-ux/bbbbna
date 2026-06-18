@@ -24,6 +24,14 @@ print("Login OK")
 # ดึง user ID ของร้านค้าจาก username
 user_id = cl.user_id_from_username(TARGET_USERNAME)
 
+# รอจนถึงเวลา 17:59:50 ของวันปัจจุบันก่อนเริ่ม loop monitoring
+start_time = datetime.now().replace(hour=17, minute=59, second=50, microsecond=0)
+wait_seconds = (start_time - datetime.now()).total_seconds()
+if wait_seconds > 0:
+    print("รอจนถึง", start_time.strftime("%H:%M:%S"), "...")
+    time.sleep(wait_seconds)
+print("เริ่ม monitoring")
+
 # วน loop ตรวจสอบโพสต์ล่าสุดทุก 1 วินาที
 while True:
     # ดึงโพสต์ล่าสุด 1 โพสต์
